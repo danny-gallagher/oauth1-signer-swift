@@ -16,5 +16,7 @@ jobs:
     - name: Build & Test
       run: | 
         pod install
-        set -o pipefail && xcodebuild -workspace MastercardOAuth1Signer.xcworkspace -verbose -scheme MastercardOAuth1Signer -destination 'platform=iOS Simulator,OS=14.0,name=iPhone 11' -derivedDataPath Build/ -enableCodeCoverage YES clean build test CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
+        set -o pipefail && xcodebuild -workspace MastercardOAuth1Signer.xcworkspace -scheme MastercardOAuth1Signer -destination 'platform=iOS Simulator,OS=14.0,name=iPhone 11' -resultBundlePath ./ -derivedDataPath Build/ -enableCodeCoverage YES clean build test CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
+        pwd
+        ls
         bash xccov-to-sonarqube-generic.sh Build/Logs/Test/*.xcresult/3_Test/*.xccovarchive > coverage.xml
