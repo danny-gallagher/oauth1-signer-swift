@@ -1,7 +1,7 @@
 name: Sonar
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_10.1.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_10.3.app/Contents/Developer
 
 on:
   push:
