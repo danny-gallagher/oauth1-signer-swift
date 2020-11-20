@@ -1,0 +1,30 @@
+name: Sonar
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: | 
+        pod install
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.3.0.1492-macosx.zip && unzip sonar-scanner-cli-3.3.0.1492-macosx.zip && wget https://sonarcloud.io/static/cpp/build-wrapper-macosx-x86.zip && unzip build-wrapper-macosx-x86.zip
+    - name: Run tests
+      run: | 
+        set -o pipefail && xcodebuild -workspace MastercardOAuth1Signer.xcworkspace -scheme MastercardOAuth1Signer -destination 'platform=iOS Simulator,OS=14.0,name=iPhone 11' -derivedDataPath Build/ -enableCodeCoverage YES clean build test CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
+        bash xccov-to-sonarqube-generic.sh Build/Logs/Test/*.xcresult/3_Test/*.xccovarchive > coverage.xml
+    - name: Sonar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: | 
+        build-wrapper-macosx-x86/build-wrapper-macosx-x86 --out-dir bw-output make clean all
+        sonar-scanner-3.3.0.1492-macosx/bin/sonar-scanner -Dsonar.projectName=oauth1-signer-swift -Dsonar.organization=mastercard -Dsonar.projectKey=Mastercard_oauth1-signer-swift -Dsonar.sources=. -Dsonar.swift.xcworkspace=MastercardOAuth1Signer.xcworkspace -Dsonar.swift.scheme=MastercardOAuth1Signer -Dsonar.swift.simulator="platform=iOS Simulator,OS=12.1,name=iPhone XR" -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverageReportPaths=coverage.xml -Dsonar.exclusions=**/Pods/**,**/Tests/**,**/MastercardOAuth1SignerTests/**,*.xml,**/Example/**,**/Build/**,**/sonar-scanner-3.3.0.1492-macosx/**
