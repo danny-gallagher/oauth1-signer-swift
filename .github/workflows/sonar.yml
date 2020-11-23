@@ -30,7 +30,9 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |  
         pwd
+        ls build-wrapper-macosx-x86
         pwd
+        ls 
         pwd
         codesign -f -s "Mac Developer: developers@mastercard.com" build-wrapper-macosx-x86/*.dylib
         build-wrapper-macosx-x86/build-wrapper-macosx-x86 --out-dir bw-output xcodebuild clean build
