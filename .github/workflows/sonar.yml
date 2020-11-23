@@ -29,5 +29,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |  
-        build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory
+        build-wrapper-macosx-x86/build-wrapper-macosx-x86 --out-dir bw-output xcodebuild clean build
         sonar-scanner-3.3.0.1492-macosx/bin/sonar-scanner -Dsonar.projectName=oauth1-signer-swift -Dsonar.organization=mastercard -Dsonar.projectKey=Mastercard_oauth1-signer-swift -Dsonar.sources=. -Dsonar.swift.xcworkspace=MastercardOAuth1Signer.xcworkspace -Dsonar.swift.scheme=MastercardOAuth1Signer -Dsonar.swift.simulator="platform=iOS Simulator,OS=12.1,name=iPhone XR" -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverageReportPaths=coverage.xml -Dsonar.exclusions=**/Pods/**,**/Tests/**,**/MastercardOAuth1SignerTests/**,*.xml,**/Example/**,**/Build/**,**/sonar-scanner-3.3.0.1492-macosx/**
